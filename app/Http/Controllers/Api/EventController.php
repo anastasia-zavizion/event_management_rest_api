@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EventRequest;
 use App\Http\Requests\UpdateEventRequest;
+use App\Http\Resources\EventResource;
 use Illuminate\Http\Request;
 use App\Models\Event;
+use Illuminate\Http\Resources\Json\JsonResource;
+
 class EventController extends Controller
 {
     /**
@@ -14,7 +17,7 @@ class EventController extends Controller
      */
     public function index()
     {
-        return Event::all();
+        return EventResource::collection(Event::with(['user','attendees'])->get());
     }
 
     /**
@@ -22,13 +25,12 @@ class EventController extends Controller
      */
     public function store(EventRequest $request)
     {
-
         $event = Event::create([
             ...$request->validated(),
            'user_id'=>1
         ]);
 
-        return $event;
+        return new EventResource($event);
     }
 
     /**
@@ -36,14 +38,16 @@ class EventController extends Controller
      */
     public function show(Event $event)
     {
-        return $event;
+        $event->load(['user', 'attendees']);
+        return new EventResource($event);
     }
 
 
     public function update(UpdateEventRequest $request, Event $event)
     {
         $event->update($request->validated());
-        return $event;
+        $event->load(['user', 'attendees']);
+        return new EventResource($event);
     }
 
     /**
