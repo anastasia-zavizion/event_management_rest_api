@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EventRequest;
+use App\Http\Requests\UpdateEventRequest;
 use Illuminate\Http\Request;
 use App\Models\Event;
 class EventController extends Controller
@@ -38,19 +39,19 @@ class EventController extends Controller
         return $event;
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+
+    public function update(UpdateEventRequest $request, Event $event)
     {
-        //
+        $event->update($request->validated());
+        return $event;
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Event $event)
     {
-        //
+        $event->delete();
+        return response()->json(['message'=>'Event deleted successfully']);
     }
 }
