@@ -17,7 +17,7 @@ class EventController extends Controller
      */
     public function index()
     {
-        return EventResource::collection(Event::with(['user','attendees'])->get());
+        return EventResource::collection(Event::with(['user','attendees'])->paginate());
     }
 
     /**
