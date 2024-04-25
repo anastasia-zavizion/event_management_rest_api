@@ -12,6 +12,11 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class AttendeeController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth:sanctum')->only(['store','destroy']);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -46,8 +51,9 @@ class AttendeeController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $event, Attendee $attendee)
+    public function destroy(Event $event, Attendee $attendee)
     {
+        $this->authorize('delete-attendee',[$event,$attendee]);
         $attendee->delete();
         return response()->json(['message'=>'Attendee was deleted']);
     }

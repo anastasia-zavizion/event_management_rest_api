@@ -10,6 +10,7 @@ use App\Http\Traits\CanLoadRelationships;
 use Illuminate\Http\Request;
 use App\Models\Event;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Gate;
 
 class EventController extends Controller
 {
@@ -57,8 +58,12 @@ class EventController extends Controller
 
     public function update(UpdateEventRequest $request, Event $event)
     {
+        /*if(Gate::denies('update-event',$event)){
+            abort(403);
+        }*/
+
+        $this->authorize('update-event',$event);
         $event->update($request->validated());
-        $event->load(['user', 'attendees']);
         return new EventResource($this->loadRelationships($event, $this->relations));
     }
 
